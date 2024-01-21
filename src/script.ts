@@ -4,6 +4,8 @@ const instructionInput = document.getElementById("instructions") as HTMLTextArea
 const loadInstructionsButton = document.getElementById("load-instructions-btn");
 const runSingleClockCycleButton = document.getElementById("run-single-clock-cycle-btn");
 const toggleViewButton = document.getElementById("toggle-view-btn");
+const toggleForwardingButton = document.getElementById("toggle-forwarding-btn");
+const forwardingStatus = document.getElementById("forwarding-status") as HTMLElement;
 const diagramBody = document.getElementById("diagram-body") as HTMLElement;
 const diagramCountHeader = document.getElementById("diagram-count") as HTMLElement;
 const diagramHeaderDefault = document.getElementById("diagram-header-default-template") as HTMLTemplateElement;
@@ -24,6 +26,10 @@ toggleViewButton?.addEventListener("click", () => {
         diagramContainer?.classList.remove("hidden");
     }
 });
+toggleForwardingButton?.addEventListener("click", () => {
+    forwardingEnabled = !forwardingEnabled;
+    forwardingStatus.innerText = forwardingEnabled ? "On" : "Off";
+});
 
 interface StageState {
     instruction: Instruction,
@@ -37,6 +43,8 @@ const stageLabelMap = ["F", "D", "X", "M", "W"];
 
 let instructionsProcessed = 0;
 let cycleCount = 0;
+
+let forwardingEnabled = false;
 
 function loadInstructions() {
     try {
@@ -98,6 +106,10 @@ function runSingleClockCycle() {
     }
 
     // Memory -> Writeback
+    if (forwardingEnabled && Number.isInteger(dataPathState[3]?.instruction.outputRegister)) {
+        hazardCount[dataPathState[3]?.instruction.outputRegister as number] -= 1;
+    }
+
     dataPathState[4] = dataPathState[3];
 
     // Execute -> Memory
@@ -112,8 +124,14 @@ function runSingleClockCycle() {
                 color: null
             };
         } else {
-            if (dataPathState[1].instruction.outputRegister) {
-                hazardCount[dataPathState[1].instruction.outputRegister] += 1;
+            if (forwardingEnabled) {
+                if (dataPathState[1].instruction.raw_instruction.startsWith("lw ")) {
+                    hazardCount[dataPathState[1].instruction.outputRegister as number] += 1;
+                }
+            } else {
+                if (dataPathState[1].instruction.outputRegister) {
+                    hazardCount[dataPathState[1].instruction.outputRegister] += 1;
+                }
             }
 
             dataPathState[2] = dataPathState[1];
@@ -126,7 +144,7 @@ function runSingleClockCycle() {
         dataPathState[0] = instructionList.length > 0 ? { instruction: instructionList.shift() as Instruction, color: getColor() } : null;
     }
 
-    if (Number.isInteger(registerToFree)) {
+    if (!forwardingEnabled && Number.isInteger(registerToFree)) {
         hazardCount[registerToFree as number] -= 1;
     }
 

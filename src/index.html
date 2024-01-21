@@ -12,10 +12,14 @@
         >
             <div class="w-1/4 h-1/2">
                 <textarea class="w-full h-full p-4 text-center textarea textarea-bordered border-black" spellcheck="false" id="instructions"></textarea>
-                <div class="w-full flex justify-around">
+                <div class="w-full flex-flow justify-around">
                     <div class="btn" id="load-instructions-btn">Load</div>
                     <div class="btn" id="run-single-clock-cycle-btn">Run Clock Cycle</div>
                     <div class="btn" id="toggle-view-btn">Toggle View</div>
+                    <div class="btn" id="toggle-forwarding-btn">Toggle Forwarding</div>
+                    <span>
+                        Forwarding Status: <span id="forwarding-status">Off</span>
+                    </span>
                 </div>
             </div>
             <div class="w-3/4 relative border border-black">
