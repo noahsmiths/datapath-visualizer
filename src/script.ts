@@ -15,7 +15,7 @@ interface StageState {
     color: string | null
 }
 
-const hazardRegisters: Array<boolean> = new Array(32).fill(false);
+const hazardCount: Array<number> = new Array(32).fill(0);
 let instructionList: Array<Instruction> = [];
 const dataPathState: Array<StageState | null> = new Array(5).fill(null);
 
@@ -46,7 +46,7 @@ function runSingleClockCycle() {
     dataPathState[3] = dataPathState[2];
 
     if (dataPathState[1] !== null) {
-        let includesInputHazards: boolean = dataPathState[1].instruction.inputRegisters.reduce((prev, el) => prev || hazardRegisters[el], false);
+        let includesInputHazards: boolean = dataPathState[1].instruction.inputRegisters.reduce((prev, el) => prev || (hazardCount[el] > 0), false);
 
         if (includesInputHazards) {
             dataPathState[2] = {
@@ -55,7 +55,7 @@ function runSingleClockCycle() {
             };
         } else {
             if (dataPathState[1].instruction.outputRegister) {
-                hazardRegisters[dataPathState[1].instruction.outputRegister] = true;
+                hazardCount[dataPathState[1].instruction.outputRegister] += 1;
             }
 
             dataPathState[2] = dataPathState[1];
@@ -69,7 +69,7 @@ function runSingleClockCycle() {
     }
 
     if (Number.isInteger(registerToFree)) {
-        hazardRegisters[registerToFree as number] = false;
+        hazardCount[registerToFree as number] -= 1;
     }
 }
 
