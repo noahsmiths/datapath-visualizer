@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --ignore *.* --exec npx parcel src/index.html",
+    "dev": "npx parcel src/index.html",
     "build": "parcel build src/index.html"
   },
   "author": "",
