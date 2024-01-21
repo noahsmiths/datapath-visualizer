@@ -33,7 +33,7 @@ export function parseInstructions(text_instructions: string[]): Instruction[] {
                 if (splitLine[0] === "sw ") { // Special store word case
                     instruction = {
                         raw_instruction: line,
-                        inputRegisters: [parseInt(splitLine[1]), parseInt(splitLine[2])], // depends on rs and rt
+                        inputRegisters: [parseInt(splitLine[1]), parseInt(splitLine[2])], // depends on rt and rs
                         outputRegister: null
                     }
                 } else {
