@@ -48,7 +48,7 @@ let forwardingEnabled = false;
 
 function loadInstructions() {
     try {
-        let splitInputList = instructionInput.value.split("\n").map(el => el.trim()).filter(el => el !== "");
+        let splitInputList = instructionInput.value.toLowerCase().split("\n").map(el => el.trim()).filter(el => el !== "");
         let parsedInstructionList = parseInstructions(splitInputList);
         instructionList = parsedInstructionList;
         hazardCount = new Array(32).fill(0);
@@ -58,6 +58,8 @@ function loadInstructions() {
 
         initializePipeline();
         initializeDiagram();
+
+        alert("Program loaded!");
     } catch (err) {
         alert(err);
         console.error(err);
@@ -151,6 +153,8 @@ function runSingleClockCycle() {
     if (dataPathState.filter(el => el !== null).length > 0) {
         cycleCount++;
         console.log(cycleCount);
+    } else {
+        alert("Running complete");
     }
 }
 
