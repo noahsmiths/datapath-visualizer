@@ -107,6 +107,11 @@ function runSingleClockCycle() {
         instructionsProcessed++;
     }
 
+    // Clear Writeback Hazard
+    if (Number.isInteger(dataPathState[4]?.instruction.outputRegister)) {
+        hazardCount[dataPathState[4]?.instruction.outputRegister as number] -= 1;
+    }
+
     // Memory -> Writeback
     if (forwardingEnabled && Number.isInteger(dataPathState[3]?.instruction.outputRegister)) {
         hazardCount[dataPathState[3]?.instruction.outputRegister as number] -= 1;
