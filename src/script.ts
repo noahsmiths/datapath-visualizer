@@ -1,4 +1,6 @@
 import { parseInstructions, Instruction } from "./util/InstructionParser";
+import DatapathNoHazards from "./assets/datapath.png";
+import DatapathWithHazards from "./assets/datapath_hazards.png";
 
 const instructionInput = document.getElementById("instructions") as HTMLTextAreaElement;
 const loadInstructionsButton = document.getElementById("load-instructions-btn");
@@ -11,6 +13,13 @@ const diagramCountHeader = document.getElementById("diagram-count") as HTMLEleme
 const diagramHeaderDefault = document.getElementById("diagram-header-default-template") as HTMLTemplateElement;
 const pipelineContainer = document.getElementById("pipeline-container");
 const diagramContainer = document.getElementById("diagram-container");
+
+const datapathImage = document.getElementById("datapath-image") as HTMLImageElement;
+const fetchStage = document.getElementById("fetch-stage") as HTMLElement;
+const decodeStage = document.getElementById("decode-stage") as HTMLElement;
+const executeStage = document.getElementById("execute-stage") as HTMLElement;
+const memoryStage = document.getElementById("memory-stage") as HTMLElement;
+const writebackStage = document.getElementById("writeback-stage") as HTMLElement;
 
 loadInstructionsButton?.addEventListener("click", loadInstructions);
 runSingleClockCycleButton?.addEventListener("click", () => {
@@ -29,6 +38,34 @@ toggleViewButton?.addEventListener("click", () => {
 toggleForwardingButton?.addEventListener("click", () => {
     forwardingEnabled = !forwardingEnabled;
     forwardingStatus.innerText = forwardingEnabled ? "On" : "Off";
+
+    if (forwardingEnabled) {
+        datapathImage.src = DatapathWithHazards;
+
+        fetchStage.style.left = "0%";
+        fetchStage.style.width = "16.3%";
+        decodeStage.style.left = "18.55%";
+        decodeStage.style.width = "26.6%";
+        executeStage.style.left = "47.4%";
+        executeStage.style.width = "18.3%";
+        memoryStage.style.left = "67.9%";
+        memoryStage.style.width = "11.3%";
+        writebackStage.style.left = "81.5%";
+        writebackStage.style.width = "18.5%";
+    } else {
+        datapathImage.src = DatapathNoHazards;
+
+        fetchStage.style.left = "0%";
+        fetchStage.style.width = "23.7%";
+        decodeStage.style.left = "26.7%";
+        decodeStage.style.width = "16%";
+        executeStage.style.left = "45.7%";
+        executeStage.style.width = "13.8%";
+        memoryStage.style.left = "62.6%";
+        memoryStage.style.width = "15.1%";
+        writebackStage.style.left = "80.75%";
+        writebackStage.style.width = "19.25%";
+    }
 });
 
 interface StageState {
@@ -151,9 +188,9 @@ function runSingleClockCycle() {
         dataPathState[0] = instructionList.length > 0 ? { instruction: instructionList.shift() as Instruction, color: getColor() } : null;
     }
 
-    if (!forwardingEnabled && Number.isInteger(registerToFree)) {
-        hazardCount[registerToFree as number] -= 1;
-    }
+    // if (!forwardingEnabled && Number.isInteger(registerToFree)) {
+    //     hazardCount[registerToFree as number] -= 1;
+    // }
 
     if (dataPathState.filter(el => el !== null).length > 0) {
         cycleCount++;
